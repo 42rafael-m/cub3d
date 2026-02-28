@@ -26,6 +26,20 @@ The engine shoots rays from the player's position across the FOV. For each ray, 
 
 ## Technical Choices
 
+## Contributing
+This project follows the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification for all commit messages. This ensures a clean and readable project history.
+
+Commit messages should be in the imperative mood (e.g., `feat: add player movement` instead of `feat: added player movement`).
+
+Common types:
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation only changes
+- `style`: Changes that do not affect the meaning of the code (white-space, formatting, etc.)
+- `refactor`: A code change that neither fixes a bug nor adds a feature
+- `test`: Adding missing tests or correcting existing tests
+- `chore`: Changes to the build process or auxiliary tools and libraries
+
 ## Resources
 - [Ray-casting Tutorial by Lode Vandevenne](https://lodev.org/cgtutor/raycasting.html)
 - [Online Playable version](http://users.atw.hu/wolf3d/)
@@ -36,4 +50,4 @@ The engine shoots rays from the player's position across the FOV. For each ray, 
 - [javidx9 YouTube Math for Game Developing](https://youtu.be/DPfxjQ6sqrc?si=Fo0VWGD2K607Fgrh)
 
 ### AI Usage
-*Describe here how AI was used, specifying for which tasks and which parts of the project.*
+Used to investigate about algorithms, create good commit messages folloeing the convention.
