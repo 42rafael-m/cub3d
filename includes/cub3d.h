@@ -6,7 +6,7 @@
 /*   By: rafael <rafael@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 12:00:00 by rafael            #+#    #+#             */
-/*   Updated: 2026/02/13 12:00:00 by rafael           ###   ########.fr       */
+/*   Updated: 2026/03/02 17:24:39 by rafael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,8 @@
 # include <math.h>
 # include <X11/keysym.h>
 # include <X11/X.h>
-# define WIDTH 600
-# define HEIGHT 600
-# define FACTOR 100
+# define WIDTH 1920
+# define HEIGHT 1080
 
 typedef struct s_map
 {
@@ -64,6 +63,26 @@ typedef struct s_player
 	double    sin_r;
 }	t_player;
 
+typedef struct s_ray
+{
+	double	dir_x;
+	double	dir_y;
+	int		map_x;
+	int		map_y;
+	double	side_dist_x;
+	double	side_dist_y;
+	double	delta_dist_x;
+	double	delta_dist_y;
+	double	perp_wall_dist;
+	int		step_x;
+	int		step_y;
+	int		hit;
+	int		side;
+	int		line_height;
+	int		draw_start;
+	int		draw_end;
+}	t_ray;
+
 typedef struct s_win
 {
 	void		*winptr;
@@ -93,7 +112,10 @@ int		rotate_left(t_player *player);
 int		rotate_right(t_player *player);
 
 // Rendering
-void	twod_map(const t_map *map, const t_img *img);
+void	render_frame(const t_win *win);
+int		key_press(int keysym, t_win *win);
+int		key_release(int keysym, t_win *win);
+int		game_loop(const t_win *win);
 
 
 // To remove later
