@@ -90,13 +90,8 @@ typedef struct s_win
 	t_img		*img;
 	t_map		*map;
 	t_player	*player;
+	int			keys[65536];
 }	t_win;
-
-typedef struct s_ray
-{
-	double	x;
-	double	y;
-}	t_ray;
 
 // Mapping
 

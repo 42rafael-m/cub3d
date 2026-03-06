@@ -6,7 +6,7 @@
 /*   By: rafael <rafael@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 12:00:00 by rafael            #+#    #+#             */
-/*   Updated: 2026/02/28 21:22:14 by rafael-m         ###   ########.fr       */
+/*   Updated: 2026/03/02 17:25:37 by rafael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 int	close_win(const t_win *win, const int keysym)
 {
-
 	if (win->winptr)
 		mlx_destroy_window(win->mlxptr, win->winptr);
 	if (win->mlxptr)
@@ -34,38 +33,45 @@ int	close_win(const t_win *win, const int keysym)
 	exit(keysym);
 }
 
-int handle_keypress(const int keysym, void *data)
+int	key_press(const int keysym, t_win *win)
 {
-	const t_win *win = (t_win *)data;
-	int	render;
-
-	render = 0;
 	if (keysym == XK_Escape)
 		close_win(win, EXIT_SUCCESS);
-	if (keysym == XK_w)
-		render = move_up(win->map->grid, win->map->width, win->player);
-	if (keysym == XK_a)
-		render = move_left(win->map->grid, win->map->width, win->player);
-	if (keysym == XK_s)
-		render = move_down(win->map->grid, win->map->width, win->player);
-	if (keysym == XK_d)
-		render = move_right(win->map->grid, win->map->width, win->player);
-	if (keysym == XK_Left)
-		render = rotate_left(win->player);
-	if (keysym == XK_Right)
-		render = rotate_right(win->player);
-	if (render)
-	{
-		twod_map(win->map, win->img);
-		mlx_put_image_to_window(win->mlxptr, win->winptr, win->img->img, 0, 0);
-	}
-	check_map(win->map);
+	if (keysym < 65536)
+		win->keys[keysym] = 1;
 	return (0);
 }
 
-void	init_data(t_win *win)
+int	key_release(const int keysym, t_win *win)
 {
-	ft_memset(win, 0, sizeof(t_win));
+	if (keysym < 65536)
+		win->keys[keysym] = 0;
+	return (0);
+}
+
+int	game_loop(const t_win *win)
+{
+	int	render;
+
+	render = 0;
+	if (win->keys[XK_w])
+		render = move_up(win->map->grid, win->map->width, win->player);
+	if (win->keys[XK_s])
+		render = move_down(win->map->grid, win->map->width, win->player);
+	if (win->keys[XK_a])
+		render = move_left(win->map->grid, win->map->width, win->player);
+	if (win->keys[XK_d])
+		render = move_right(win->map->grid, win->map->width, win->player);
+	if (win->keys[XK_Left])
+		render = rotate_left(win->player);
+	if (win->keys[XK_Right])
+		render = rotate_right(win->player);
+	if (render)
+	{
+		render_frame(win);
+		mlx_put_image_to_window(win->mlxptr, win->winptr, win->img->img, 0, 0);
+	}
+	return (0);
 }
 
 void	check_map(const t_map *map)
@@ -85,7 +91,7 @@ void	check_map(const t_map *map)
 	write(1, "\n", 1);
 }
 
-void	init_player(t_player *player, const char *grid, const int width, const int total)
+void	init_player(t_player *player, char *grid, const int width, const int total)
 {
 	int	i;
 
@@ -95,13 +101,14 @@ void	init_player(t_player *player, const char *grid, const int width, const int 
 	player->grid_pos = i;
 	player->pos_x = (double)(i % width) + 0.5;
 	player->pos_y = (double)(i / width) + 0.5;
+	grid[i] = '0';
 	player->dir_x = 0.0;
 	player->dir_y = 1.0;
 	player->camp_mod = 0.66;
-	player->camp_x = 0.0;
-	player->camp_y = player->camp_mod;
-	player->speed = 0.25;
-	player->turn_speed = 0.05;
+	player->camp_x = -0.66;
+	player->camp_y = 0.0;
+	player->speed = 0.005;
+	player->turn_speed = 0.005;
 	player->cos_r = cos(player->turn_speed);
 	player->sin_r = sin(player->turn_speed);
 	player->cos_l = cos(-player->turn_speed);
@@ -121,7 +128,6 @@ int	main(void)
 	win.img = &img;
 	win.player = &player;
 	init_player(&player, map->grid, map->width, map->width * map->height);
-	check_map(map);
 	win.mlxptr = mlx_init();
 	if (!win.mlxptr)
 		return (1);
@@ -129,11 +135,9 @@ int	main(void)
 	img.bpp = 4;
 	win.winptr = mlx_new_window(win.mlxptr, WIDTH, HEIGHT, "cub3d");
 	if (!win.winptr)
-	{
-		free(win.mlxptr);
-		return (1);
-	}
-	mlx_hook(win.winptr, KeyPress, KeyPressMask, handle_keypress, &win);
+		return (free(win.mlxptr), 1);
+	mlx_hook(win.winptr, KeyPress, KeyPressMask, key_press, &win);
+	mlx_hook(win.winptr, KeyRelease, KeyReleaseMask, key_release, &win);
 	mlx_hook(win.winptr, DestroyNotify, 0, close_win, &win);
 	img.img = mlx_new_image(win.mlxptr, WIDTH, HEIGHT);
 	if (!img.img)
@@ -141,9 +145,9 @@ int	main(void)
 	img.addr = mlx_get_data_addr(img.img, &img.bpp, &img.line_len, &img.endian);
 	if (!img.addr)
 		return (write(2, "Error addr\n", 12), free(img.img), close_win(&win, EXIT_FAILURE), 1);
-	twod_map(map, &img);
+	render_frame(&win);
 	mlx_put_image_to_window(win.mlxptr, win.winptr, img.img, 0, 0);
+	mlx_loop_hook(win.mlxptr, game_loop, &win);
 	mlx_loop(win.mlxptr);
-	close_win(&win, EXIT_FAILURE);
 	return (0);
 }
