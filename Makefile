@@ -20,6 +20,7 @@ CFLAGS      = -Wall -Wextra -Werror -flto -O3 -MMD -fno-omit-frame-pointer
 #-fsanitize=address,leak -O0 -g3
 RM          = rm -rf
 
+# OS Detection and MLX Configuration
 UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S),Linux)
