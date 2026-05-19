@@ -87,8 +87,6 @@ int				handle_input(t_win *win);
 void			render_sprites(t_win *win);
 void			render_door(t_win *win, const t_sprite *door);
 void			render_minimap(const t_map *map, t_img *img, const t_win *win);
-unsigned int	alpha_blend(unsigned int background, unsigned int foreground,
-					float alpha);
 int				door_dda(t_win *win, t_ray *ray, const t_sprite *door);
 void			calculate_sprite_distances(t_win *win, t_pair *pairs);
 void			sort_sprites(t_win *win);

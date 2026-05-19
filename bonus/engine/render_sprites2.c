@@ -81,20 +81,4 @@ void	calculate_draw_params(t_win *win, t_sprite *sprite,
 		draw->draw_end_x = WIDTH - 1;
 }
 
-unsigned int	alpha_blend(unsigned int background, unsigned int foreground,
-	float alpha)
-{
-	unsigned int	red;
-	unsigned int	green;
-	unsigned int	blue;
-	unsigned int	alpha_int;
 
-	alpha_int = (unsigned int)(alpha * 256.0f);
-	red = ((((background >> 16) & 0xFF) * (256 - alpha_int))
-			+ (((foreground >> 16) & 0xFF) * alpha_int)) >> 8;
-	green = ((((background >> 8) & 0xFF) * (256 - alpha_int))
-			+ (((foreground >> 8) & 0xFF) * alpha_int)) >> 8;
-	blue = (((background & 0xFF) * (256 - alpha_int))
-			+ ((foreground & 0xFF) * alpha_int)) >> 8;
-	return ((red << 16) | (green << 8) | blue);
-}

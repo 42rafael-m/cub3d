@@ -15,14 +15,9 @@
 static void	apply_sprite_pixel(t_sprite *sprite, unsigned int *dest,
 	unsigned int color)
 {
+	(void)sprite;
 	if ((color & 0x00FFFFFF) != 0)
-	{
-		if ((sprite->sprite_id == FIRE) && ((color >> 16) & 0xFF) > 150
-			&& ((color >> 8) & 0xFF) > 100)
-			*dest = alpha_blend(*dest, color, 0.7);
-		else
-			*dest = color;
-	}
+		*dest = color;
 }
 
 static void	draw_sprite_v_line(t_win *win, t_sprite *s, t_sprite_draw *draw,
